@@ -71,8 +71,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\AI\GameAI.vb" />
+    <Compile Include="Model\AI\Movement\Movement.vb" />
     <Compile Include="Model\Map\Joint.vb" />
     <Compile Include="Model\Map\Map.vb" />
+    <Compile Include="Model\Mode\DifficultyMode.vb" />
+    <Compile Include="Model\Mode\PlayerMode.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

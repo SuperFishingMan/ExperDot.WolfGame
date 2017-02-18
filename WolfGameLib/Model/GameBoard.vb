@@ -4,26 +4,35 @@
 ''' </summary>
 Public Class GameBoard
     ''' <summary>
+    ''' 地图改变时发生的事件
+    ''' </summary>
+    Public Event MapChanged(sender As Object, e As EventArgs)
+    ''' <summary>
     ''' 地图
     ''' </summary>
     Public Property Map As Map
     ''' <summary>
-    ''' 羊只闲置数量
+    ''' 玩家阵营
     ''' </summary>
-    Public Property SheepRemaining As Integer = 10
+    Public Property PlayerCamp As Camp = Camp.Wolf
     ''' <summary>
-    ''' 当前阵营
+    ''' 玩家模式
     ''' </summary>
-    Public Property ActivedCamp As Camp = Camp.Wolf
+    Public Property PlayerMode As PlayerMode = PlayerMode.Single
+    ''' <summary>
+    ''' 游戏AI
+    ''' </summary>
+    Public Property AI As GameAI
 
-    Private Property ActivePiece As IPiece
+    Dim ActivePiece As IPiece
+
     Public Sub New()
         Start()
     End Sub
     ''' <summary>
     ''' 开始
     ''' </summary>
-    Public Sub Start()
+    Public Sub Start(Optional playerMode As PlayerMode = PlayerMode.Single)
         Map = New Map(5, 9)
         Dim wolfLoc As Vector2() = {New Vector2(2, 2), New Vector2(2, 6)}
         Dim sheepLoc As Vector2() = {New Vector2(1, 3), New Vector2(2, 3), New Vector2(3, 3),
@@ -35,31 +44,38 @@ Public Class GameBoard
         For Each SubVec In sheepLoc
             Map.Place(New Sheep With {.Location = SubVec})
         Next
+        '初始化AI
+        If playerMode = PlayerMode.Single Then
+            AI = New GameAI()
+            If playerMode = PlayerMode.Single AndAlso Not Map.ActivedCamp = PlayerCamp Then
+                AI.Move(Me)
+            End If
+        End If
     End Sub
 
     ''' <summary>
-    ''' 交换阵营
+    ''' 下一步
     ''' </summary>
-    Public Sub Exchange()
-        If ActivedCamp = Camp.Wolf Then
-            ActivedCamp = Camp.Sheep
-        Else
-            ActivedCamp = Camp.Wolf
+    Public Sub NextStep()
+        Map.Exchange()
+        RaiseEvent MapChanged(Me, Nothing)
+        If PlayerMode = PlayerMode.Single AndAlso Not Map.ActivedCamp = PlayerCamp Then
+            AI.Move(Me)
         End If
-        ActivePiece = Nothing
     End Sub
     ''' <summary>
     ''' 移动
     ''' </summary>
     Public Sub Move(piece As IPiece, loc As Vector2)
-        If ActivedCamp = Camp.Sheep AndAlso SheepRemaining > 0 AndAlso Map.LocateMapping(loc) Then
-            Map.Place(New Sheep With {.Location = loc})
-            SheepRemaining -= 1 '闲置数量减一
-            Exchange()
+        If piece Is Nothing Then
+            If Map.MoveTo(piece, loc) Then
+                NextStep()
+            End If
         Else
-            If piece?.Camp = ActivedCamp Then
-                If piece.Move(Map, loc) Then
-                    Exchange()
+            If piece?.Camp = Map.ActivedCamp Then
+                If piece.Moveable(Map, loc) Then
+                    Map.MoveTo(piece, loc)
+                    NextStep()
                 End If
             End If
         End If
@@ -69,6 +85,7 @@ Public Class GameBoard
         If loc.X >= 0 AndAlso loc.X < Map.Width AndAlso loc.Y >= 0 AndAlso loc.Y < Map.Height Then
             If Map.Locate(loc) Is Nothing Then
                 Move(ActivePiece, loc)
+                ActivePiece = Nothing
             Else
                 ActivePiece = Map.Locate(loc)
             End If

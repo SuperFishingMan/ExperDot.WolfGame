@@ -12,7 +12,7 @@ Public Interface IPiece
     ''' </summary>
     Property Location As Vector2
     ''' <summary>
-    ''' 移动
+    ''' 是否可移动
     ''' </summary>
-    Function Move(map As Map, loc As Vector2) As Boolean
+    Function Moveable(map As Map, loc As Vector2) As Boolean
 End Interface

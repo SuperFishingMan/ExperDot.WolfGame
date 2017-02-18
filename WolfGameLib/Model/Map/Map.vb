@@ -8,6 +8,14 @@ Public Class Map
     ''' </summary>
     Public Property Pieces As IPiece(,)
     ''' <summary>
+    ''' 羊只闲置数量
+    ''' </summary>
+    Public Property SheepRemaining As Integer = 16
+    ''' <summary>
+    ''' 当前阵营
+    ''' </summary>
+    Public Property ActivedCamp As Camp = Camp.Wolf
+    ''' <summary>
     ''' 宽度
     ''' </summary>
     Public ReadOnly Property Width As Integer
@@ -91,6 +99,12 @@ Public Class Map
         Joints(4, 8) = New Joint With {.Round = New Integer(,) {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}}
     End Sub
     ''' <summary>
+    ''' 交换阵营
+    ''' </summary>
+    Public Sub Exchange()
+        ActivedCamp = If(ActivedCamp = Camp.Wolf, Camp.Sheep, Camp.Wolf)
+    End Sub
+    ''' <summary>
     ''' 放置
     ''' </summary>
     Public Sub Place(piece As IPiece)
@@ -110,13 +124,72 @@ Public Class Map
         Pieces(loc.X, loc.Y) = piece
     End Sub
     ''' <summary>
-    ''' 定位映射
+    ''' 返回指定位置的的连通器
     ''' </summary>
-    Public Function LocateMapping(loc As Vector2) As Boolean
-        Return If(Mapping(loc.Y, loc.X) = 1, True, False)
-    End Function
-
     Public Function GetJoint(loc As Vector2) As Joint
         Return Joints(loc.X, loc.Y)
     End Function
+    ''' <summary>
+    ''' 是否有效
+    ''' </summary>
+    Public Function GetAvailiable(loc As Vector2)
+        If loc.X >= 0 AndAlso loc.X < Width AndAlso loc.Y >= 0 AndAlso loc.Y < Height Then
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+    ''' <summary>
+    ''' 移动
+    ''' </summary>
+    Public Function MoveTo(piece As IPiece, loc As Vector2) As Boolean
+        If piece Is Nothing Then
+            If ActivedCamp = Camp.Sheep AndAlso SheepRemaining > 0 AndAlso GetJoint(loc).Connected Then
+                Assign(New Sheep, loc)
+                SheepRemaining -= 1
+            Else
+                Return False
+            End If
+        Else
+            Dim temp As Vector2 = (loc - piece.Location)
+            If temp.LengthSquared <= 2 Then
+                MovePiece(piece, loc)
+            Else
+                Assign(Nothing, piece.Location + temp / 2)
+                MovePiece(piece, loc)
+            End If
+        End If
+        Return True
+    End Function
+
+    ''' <summary>
+    ''' 移动还原
+    ''' </summary>
+    Public Function MoveToRevert(piece As IPiece, loc As Vector2) As Boolean
+        If piece Is Nothing Then
+            Assign(Nothing, loc)
+            SheepRemaining += 1
+        Else
+            Dim temp As Vector2 = (loc - piece.Location)
+            If temp.LengthSquared <= 2 Then
+                MovePiece(piece, loc)
+            Else
+                Assign(New Sheep, piece.Location + temp / 2)
+                MovePiece(piece, loc)
+            End If
+        End If
+        Return True
+    End Function
+    Private Sub MovePiece(piece As IPiece, loc As Vector2)
+        Dim temp As Vector2 = piece.Location
+        Assign(piece, loc)
+        Assign(Nothing, temp)
+    End Sub
+    ''' <summary>
+    ''' 胜负判定
+    ''' </summary>
+    Public Shared Function CheckVictory(map As Map) As Boolean
+        Return True
+    End Function
+
 End Class

@@ -5,7 +5,7 @@ Imports System.Windows.Input
 
 Public Class WolfBoardBox
 
-    Public Property Board As GameBoard
+    Public WithEvents Board As GameBoard
     Public Sub New()
 
         ' 此调用是设计器所必需的。
@@ -24,6 +24,10 @@ Public Class WolfBoardBox
         Refresh()
     End Sub
 
+    Private Sub Board_MapChanged(sender As Object, e As EventArgs) Handles Board.MapChanged
+        Refresh()
+    End Sub
+
     Private Sub Grid1_MouseDown(sender As Object, e As MouseButtonEventArgs) Handles Grid1.MouseDown
         Dim point As Point = e.GetPosition(Grid0)
         Dim x As Integer = point.X / 39
@@ -36,8 +40,6 @@ Public Class WolfBoardBox
             y = (point.Y - (39 * 5)) / 19 + 6
         End If
         Board.Clicked(New Vector2(x, y))
-        Refresh()
-
     End Sub
 
 
@@ -55,6 +57,6 @@ Public Class WolfBoardBox
             Dim isScale As Boolean = If(SubPiece.Location.Y < 2 OrElse SubPiece.Location.Y > 6, True, False)
             Grid1.Children.Add(New PieceBox With {.Margin = margin, .IsOpposite = isOpposite, .IsScale = isScale})
         Next
-        TextBlock1.Text = Board.ActivedCamp.ToString & $"---闲置数量:{Board.SheepRemaining}"
+        TextBlock1.Text = Board.Map.ActivedCamp.ToString & $"---闲置数量:{Board.Map.SheepRemaining}"
     End Sub
 End Class
