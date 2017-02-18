@@ -71,6 +71,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Map\Joint.vb" />
+    <Compile Include="Model\Map\Map.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -107,6 +109,7 @@
     <Compile Include="UserControl\WolfGameBox.xaml.vb">
       <DependentUpon>WolfGameBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Mathmatical\Vector2Extensions.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

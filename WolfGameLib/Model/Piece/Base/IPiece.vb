@@ -14,5 +14,5 @@ Public Interface IPiece
     ''' <summary>
     ''' 移动
     ''' </summary>
-    Function Move(map As IPiece(,), loc As Vector2) As Boolean
+    Function Move(map As Map, loc As Vector2) As Boolean
 End Interface

@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WolfGameLib"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Margin="-16,-16,0,0">
-        <Image x:Name="Image0" Source="/WolfGameLib;component/Image/Wolf.png" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="32" />
-        <Image x:Name="Image1" Visibility="Collapsed" Source="/WolfGameLib;component/Image/Sheep.png" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="32" />
+             d:DesignHeight="32" d:DesignWidth="32">
+    <Grid x:Name="Grid0">
+        <Grid x:Name="Grid1" Margin="-12,-12,0,0">
+            <Image x:Name="Image0" Source="/WolfGameLib;component/Image/Wolf.png" HorizontalAlignment="Left" VerticalAlignment="Top" Width="24" Height="24" />
+            <Image x:Name="Image1" Visibility="Collapsed" Source="/WolfGameLib;component/Image/Sheep.png" HorizontalAlignment="Left" VerticalAlignment="Top" Width="24" Height="24" />
+        </Grid>
     </Grid>
 </UserControl>

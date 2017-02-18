@@ -8,9 +8,8 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid x:Name="Grid0">
-            <TextBlock x:Name="TextBlock1" Text="狼" FontSize="12" Foreground="#FF939393" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <TextBlock x:Name="TextBlock1" Text="狼" FontSize="12" Foreground="#FF939393" />
         </Grid>
-   
-        <Grid x:Name="Grid1" Background="#19DCDCDC"/>
+        <Grid x:Name="Grid1" Background="#19111111"/>
     </Grid>
 </UserControl>
