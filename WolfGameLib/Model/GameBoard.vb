@@ -33,6 +33,7 @@ Public Class GameBoard
     ''' 开始
     ''' </summary>
     Public Sub Start(Optional playerMode As PlayerMode = PlayerMode.Single)
+        Me.PlayerMode = playerMode
         Map = New Map(5, 9)
         Dim wolfLoc As Vector2() = {New Vector2(2, 2), New Vector2(2, 6)}
         Dim sheepLoc As Vector2() = {New Vector2(1, 3), New Vector2(2, 3), New Vector2(3, 3),
@@ -47,7 +48,7 @@ Public Class GameBoard
         '初始化AI
         If playerMode = PlayerMode.Single Then
             AI = New GameAI()
-            If playerMode = PlayerMode.Single AndAlso Not Map.ActivedCamp = PlayerCamp Then
+            If Not Map.ActivedCamp = PlayerCamp Then
                 AI.Move(Me)
             End If
         End If
@@ -57,6 +58,7 @@ Public Class GameBoard
     ''' 下一步
     ''' </summary>
     Public Sub NextStep()
+        My.Computer.Audio.Play("Resources/1381.wav") '临时代码
         Map.Exchange()
         RaiseEvent MapChanged(Me, Nothing)
         If PlayerMode = PlayerMode.Single AndAlso Not Map.ActivedCamp = PlayerCamp Then
@@ -72,12 +74,21 @@ Public Class GameBoard
                 NextStep()
             End If
         Else
-            If piece?.Camp = Map.ActivedCamp Then
+            If piece.Camp = Map.ActivedCamp Then
                 If piece.Moveable(Map, loc) Then
                     Map.MoveTo(piece, loc)
                     NextStep()
                 End If
             End If
+        End If
+    End Sub
+    ''' <summary>
+    ''' 执子方认输
+    ''' </summary>
+    Public Sub Defeate()
+        '临时代码
+        If MsgBox(If(Map.ActivedCamp = Camp.Wolf, "狼方", "羊方") + "认输！是否重来一局？", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
+            Start()
         End If
     End Sub
 

@@ -7,22 +7,28 @@ Public Class GameAI
     ''' 走棋
     ''' </summary>
     Public Sub Move(board As GameBoard)
-        Dim temp = Search(board.Map, 9)
-        If temp.Piece Is Nothing Then
-            board.Move(Nothing, temp.Target)
+        Dim extra As Integer = If(board.Map.ActivedCamp = Camp.Wolf, 1, 0)
+        Dim temp = RootSearch(board.Map, 6 + extra)
+        If temp Is Nothing Then
+            board.Defeate()
         Else
-            board.Move(temp.Piece, temp.Piece.Location + temp.Target)
+            If temp.Piece Is Nothing Then
+                board.Move(Nothing, temp.Target)
+            Else
+                board.Move(temp.Piece, temp.Piece.Location + temp.Target)
+            End If
         End If
     End Sub
     ''' <summary>
-    ''' 搜索
+    ''' 根搜索
     ''' </summary>
-    Public Function Search(map As Map, depth As Integer) As Movement
+    Public Function RootSearch(map As Map, depth As Integer) As Movement
         Dim value As Integer = Integer.MinValue
         Dim movement As Movement = Nothing
+        Dim invert As Integer = If(map.ActivedCamp = Camp.Wolf, 1, -1)
         For Each SubMovement In CalcMovements(map)
             GoForward(map, SubMovement)
-            Dim tempvalue = -NegaMax(map, depth - 1)
+            Dim tempvalue = invert * AlphaBeta(map, depth - 1, Integer.MinValue + 10, Integer.MaxValue - 10)
             If value < tempvalue Then
                 value = tempvalue
                 movement = SubMovement
@@ -33,21 +39,28 @@ Public Class GameAI
     End Function
 
     ''' <summary>
-    ''' 负极大值搜索
+    ''' AlphaBeta搜索
     ''' </summary>
-    Public Function NegaMax(map As Map, depth As Integer) As Integer
+    Public Function AlphaBeta(map As Map, depth As Integer, alpha As Integer, beta As Integer) As Integer
         If (depth <= 0 OrElse Map.CheckVictory(map)) Then
             Return Evaluate(map)
         Else
             Dim value As Integer = Integer.MinValue
             For Each SubMovement In CalcMovements(map)
                 GoForward(map, SubMovement)
-                value = Math.Max(value, -NegaMax(map, depth - 1))
+                value = -AlphaBeta(map, depth - 1, -beta, -alpha)
                 GoBack(map, SubMovement)
+                If value >= beta Then
+                    Return beta
+                ElseIf value > alpha Then
+                    alpha = value
+                End If
             Next
-            Return value
+            Return alpha
         End If
     End Function
+
+
     ''' <summary>
     ''' 前进
     ''' </summary>
@@ -76,24 +89,38 @@ Public Class GameAI
     ''' </summary>
     Public Function Evaluate(map As Map) As Integer
         Dim value As Integer = 0
+        Dim sheepCount As Integer = map.SheepRemaining
+        Dim round As Integer = 0
         Static InnerVecs = New Vector2() {New Vector2(-1, -1), New Vector2(0, -1), New Vector2(1, -1), New Vector2(1, 0), New Vector2(1, 1), New Vector2(0, 1), New Vector2(0, -1), New Vector2(-1, 0)}
         Static OuterVecs = New Vector2() {New Vector2(-2, -2), New Vector2(0, -2), New Vector2(2, -2), New Vector2(2, 0), New Vector2(2, 2), New Vector2(0, 2), New Vector2(0, -2), New Vector2(-2, 0)}
         For Each SubPiece In map.Pieces
-            If SubPiece?.Camp = Camp.Wolf Then
+            If SubPiece Is Nothing Then Continue For
+
+            If SubPiece.Camp = Camp.Wolf Then
                 For Each SubVec In InnerVecs
                     Dim temp As Vector2 = SubPiece.Location + SubVec
                     If SubPiece.Moveable(map, temp) Then
-                        value += 10
+                        value += 1
+                        round += 1
                     End If
                 Next
                 For Each SubVec In OuterVecs
                     Dim temp As Vector2 = SubPiece.Location + SubVec
                     If SubPiece.Moveable(map, temp) Then
-                        value += 30
+                        value += 5
+                        round += 1
                     End If
                 Next
+            ElseIf SubPiece.Camp = Camp.Sheep Then
+                sheepCount += 1
             End If
         Next
+        If round = 0 Then
+            value = -100000000
+        Else
+            value -= sheepCount * 500 '* Math.Log(sheepCount)
+        End If
+
         Return value
     End Function
 

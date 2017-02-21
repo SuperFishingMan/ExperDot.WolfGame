@@ -189,7 +189,7 @@ Public Class Map
     ''' 胜负判定
     ''' </summary>
     Public Shared Function CheckVictory(map As Map) As Boolean
-        Return True
+        Return False
     End Function
 
 End Class
