@@ -35,10 +35,10 @@ Public Class GameBoard
     Public Sub Start(Optional playerMode As PlayerMode = PlayerMode.Single)
         Me.PlayerMode = playerMode
         Map = New Map(5, 9)
-        Dim wolfLoc As Vector2() = {New Vector2(2, 2), New Vector2(2, 6)}
-        Dim sheepLoc As Vector2() = {New Vector2(1, 3), New Vector2(2, 3), New Vector2(3, 3),
-                                     New Vector2(1, 4), New Vector2(3, 4),
-                                     New Vector2(1, 5), New Vector2(2, 5), New Vector2(3, 5)}
+        Dim wolfLoc As VectorInt() = {New VectorInt(2, 2), New VectorInt(2, 6)}
+        Dim sheepLoc As VectorInt() = {New VectorInt(1, 3), New VectorInt(2, 3), New VectorInt(3, 3),
+                                     New VectorInt(1, 4), New VectorInt(3, 4),
+                                     New VectorInt(1, 5), New VectorInt(2, 5), New VectorInt(3, 5)}
         For Each SubVec In wolfLoc
             Map.Place(New Wolf With {.Location = SubVec})
         Next
@@ -68,7 +68,7 @@ Public Class GameBoard
     ''' <summary>
     ''' 移动
     ''' </summary>
-    Public Sub Move(piece As IPiece, loc As Vector2)
+    Public Sub Move(piece As IPiece, loc As VectorInt)
         If piece Is Nothing Then
             If Map.MoveTo(piece, loc) Then
                 NextStep()
@@ -92,7 +92,7 @@ Public Class GameBoard
         End If
     End Sub
 
-    Public Sub Clicked(loc As Vector2)
+    Public Sub Clicked(loc As VectorInt)
         If loc.X >= 0 AndAlso loc.X < Map.Width AndAlso loc.Y >= 0 AndAlso loc.Y < Map.Height Then
             If Map.Locate(loc) Is Nothing Then
                 Move(ActivePiece, loc)

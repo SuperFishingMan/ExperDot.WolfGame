@@ -8,10 +8,11 @@ Public Class Joint
     ''' </summary>
     Public Property Round As Integer(,)
 
-    Public Function Connected(Optional offset As Vector2 = Nothing) As Boolean
-        If offset = Nothing Then
-            offset = Vector2.Zero
-        End If
+    Public Function Connected() As Boolean
+        Return Round(1, 1) = 1
+    End Function
+
+    Public Function Connected(offset As VectorInt) As Boolean
         Return Round(1 + offset.Y, 1 + offset.X) = 1
     End Function
 End Class

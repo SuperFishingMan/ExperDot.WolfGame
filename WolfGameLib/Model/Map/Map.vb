@@ -113,26 +113,26 @@ Public Class Map
     ''' <summary>
     ''' 定位
     ''' </summary>
-    Public Function Locate(loc As Vector2) As IPiece
+    Public Function Locate(loc As VectorInt) As IPiece
         Return Pieces(loc.X, loc.Y)
     End Function
     ''' <summary>
     ''' 赋值
     ''' </summary>
-    Public Sub Assign(piece As IPiece, loc As Vector2)
+    Public Sub Assign(piece As IPiece, loc As VectorInt)
         If piece IsNot Nothing Then piece.Location = loc
         Pieces(loc.X, loc.Y) = piece
     End Sub
     ''' <summary>
     ''' 返回指定位置的的连通器
     ''' </summary>
-    Public Function GetJoint(loc As Vector2) As Joint
+    Public Function GetJoint(loc As VectorInt) As Joint
         Return Joints(loc.X, loc.Y)
     End Function
     ''' <summary>
     ''' 是否有效
     ''' </summary>
-    Public Function GetAvailiable(loc As Vector2)
+    Public Function GetAvailiable(loc As VectorInt)
         If loc.X >= 0 AndAlso loc.X < Width AndAlso loc.Y >= 0 AndAlso loc.Y < Height Then
             Return True
         Else
@@ -142,7 +142,7 @@ Public Class Map
     ''' <summary>
     ''' 移动
     ''' </summary>
-    Public Function MoveTo(piece As IPiece, loc As Vector2) As Boolean
+    Public Function MoveTo(piece As IPiece, loc As VectorInt) As Boolean
         If piece Is Nothing Then
             If ActivedCamp = Camp.Sheep AndAlso SheepRemaining > 0 AndAlso GetJoint(loc).Connected Then
                 Assign(New Sheep, loc)
@@ -151,7 +151,7 @@ Public Class Map
                 Return False
             End If
         Else
-            Dim temp As Vector2 = (loc - piece.Location)
+            Dim temp As VectorInt = (loc - piece.Location)
             If temp.LengthSquared <= 2 Then
                 MovePiece(piece, loc)
             Else
@@ -165,12 +165,12 @@ Public Class Map
     ''' <summary>
     ''' 移动还原
     ''' </summary>
-    Public Function MoveToRevert(piece As IPiece, loc As Vector2) As Boolean
+    Public Function MoveToRevert(piece As IPiece, loc As VectorInt) As Boolean
         If piece Is Nothing Then
             Assign(Nothing, loc)
             SheepRemaining += 1
         Else
-            Dim temp As Vector2 = (loc - piece.Location)
+            Dim temp As VectorInt = (loc - piece.Location)
             If temp.LengthSquared <= 2 Then
                 MovePiece(piece, loc)
             Else
@@ -180,8 +180,8 @@ Public Class Map
         End If
         Return True
     End Function
-    Private Sub MovePiece(piece As IPiece, loc As Vector2)
-        Dim temp As Vector2 = piece.Location
+    Private Sub MovePiece(piece As IPiece, loc As VectorInt)
+        Dim temp As VectorInt = piece.Location
         Assign(piece, loc)
         Assign(Nothing, temp)
     End Sub
@@ -189,7 +189,7 @@ Public Class Map
     ''' 胜负判定
     ''' </summary>
     Public Shared Function CheckVictory(map As Map) As Boolean
-        Return False
+        Return True
     End Function
 
 End Class

@@ -78,6 +78,7 @@
     <Compile Include="Model\Map\Map.vb" />
     <Compile Include="Model\Mode\DifficultyMode.vb" />
     <Compile Include="Model\Mode\PlayerMode.vb" />
+    <Compile Include="Model\Vector\VectorInt.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -165,11 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Image\Sheep.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Image\Sheepfold.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Image\Wolf.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

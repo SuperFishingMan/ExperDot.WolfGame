@@ -39,7 +39,7 @@ Public Class WolfBoardBox
             x = 2 + (point.X - 78) / 19
             y = (point.Y - (39 * 5)) / 19 + 6
         End If
-        Board.Clicked(New Vector2(x, y))
+        Board.Clicked(New VectorInt(x, y))
     End Sub
 
 
@@ -57,6 +57,6 @@ Public Class WolfBoardBox
             Dim isScale As Boolean = If(SubPiece.Location.Y < 2 OrElse SubPiece.Location.Y > 6, True, False)
             Grid1.Children.Add(New PieceBox With {.Margin = margin, .IsOpposite = isOpposite, .IsScale = isScale})
         Next
-        TextBlock1.Text = Board.Map.ActivedCamp.ToString & $"---闲置数量:{Board.Map.SheepRemaining}"
+        'TextBlock1.Text = Board.Map.ActivedCamp.ToString & $"---闲置数量:{Board.Map.SheepRemaining}"
     End Sub
 End Class

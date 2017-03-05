@@ -8,7 +8,7 @@ Public Class GameAI
     ''' </summary>
     Public Sub Move(board As GameBoard)
         Dim extra As Integer = If(board.Map.ActivedCamp = Camp.Wolf, 1, 0)
-        Dim temp = RootSearch(board.Map, 6 + extra)
+        Dim temp = RootSearch(board.Map, 5 + extra)
         If temp Is Nothing Then
             board.Defeate()
         Else
@@ -60,7 +60,6 @@ Public Class GameAI
         End If
     End Function
 
-
     ''' <summary>
     ''' 前进
     ''' </summary>
@@ -85,27 +84,27 @@ Public Class GameAI
     End Sub
 
     ''' <summary>
-    ''' 局面评价
+    ''' 返回局面评估值
     ''' </summary>
     Public Function Evaluate(map As Map) As Integer
         Dim value As Integer = 0
         Dim sheepCount As Integer = map.SheepRemaining
         Dim round As Integer = 0
-        Static InnerVecs = New Vector2() {New Vector2(-1, -1), New Vector2(0, -1), New Vector2(1, -1), New Vector2(1, 0), New Vector2(1, 1), New Vector2(0, 1), New Vector2(0, -1), New Vector2(-1, 0)}
-        Static OuterVecs = New Vector2() {New Vector2(-2, -2), New Vector2(0, -2), New Vector2(2, -2), New Vector2(2, 0), New Vector2(2, 2), New Vector2(0, 2), New Vector2(0, -2), New Vector2(-2, 0)}
+        Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
+        Static OuterVecs = New VectorInt() {New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
         For Each SubPiece In map.Pieces
             If SubPiece Is Nothing Then Continue For
 
             If SubPiece.Camp = Camp.Wolf Then
                 For Each SubVec In InnerVecs
-                    Dim temp As Vector2 = SubPiece.Location + SubVec
+                    Dim temp As VectorInt = SubPiece.Location + SubVec
                     If SubPiece.Moveable(map, temp) Then
                         value += 1
                         round += 1
                     End If
                 Next
                 For Each SubVec In OuterVecs
-                    Dim temp As Vector2 = SubPiece.Location + SubVec
+                    Dim temp As VectorInt = SubPiece.Location + SubVec
                     If SubPiece.Moveable(map, temp) Then
                         value += 5
                         round += 1
@@ -118,24 +117,26 @@ Public Class GameAI
         If round = 0 Then
             value = -100000000
         Else
-            value -= sheepCount * 500 '* Math.Log(sheepCount)
+            value -= sheepCount * 10 * Math.Log(sheepCount)
         End If
 
         Return value
     End Function
 
-
+    ''' <summary>
+    ''' 返回所有走法
+    ''' </summary>
     Public Function CalcMovements(map As Map) As Movement()
-        Static InnerVecs = New Vector2() {New Vector2(-1, -1), New Vector2(0, -1), New Vector2(1, -1), New Vector2(1, 0), New Vector2(1, 1), New Vector2(0, 1), New Vector2(0, -1), New Vector2(-1, 0)}
-        Static OuterVecs = New Vector2() {New Vector2(-1, -1), New Vector2(0, -1), New Vector2(1, -1), New Vector2(1, 0), New Vector2(1, 1), New Vector2(0, 1), New Vector2(0, -1), New Vector2(-1, 0),
-                                          New Vector2(-2, -2), New Vector2(0, -2), New Vector2(2, -2), New Vector2(2, 0), New Vector2(2, 2), New Vector2(0, 2), New Vector2(0, -2), New Vector2(-2, 0)}
+        Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
+        Static OuterVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
+                                            New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
 
         Dim movements As New List(Of Movement)
         If map.ActivedCamp = Camp.Wolf Then
             For Each SubPiece In map.Pieces
                 If SubPiece?.Camp = Camp.Wolf Then
                     For Each SubVec In OuterVecs
-                        Dim temp As Vector2 = SubPiece.Location + SubVec
+                        Dim temp As VectorInt = SubPiece.Location + SubVec
                         If SubPiece.Moveable(map, temp) Then
                             movements.Add(New Movement With {.Piece = SubPiece, .Target = SubVec})
                         End If
@@ -146,7 +147,7 @@ Public Class GameAI
             If map.SheepRemaining > 0 Then
                 For i = 0 To 4
                     For j = 0 To 8
-                        Dim temp As Vector2 = New Vector2(i, j)
+                        Dim temp As VectorInt = New VectorInt(i, j)
                         If map.Locate(temp) Is Nothing AndAlso map.GetJoint(temp).Connected Then
                             movements.Add(New Movement With {.Piece = Nothing, .Target = temp})
                         End If
@@ -156,7 +157,7 @@ Public Class GameAI
                 For Each SubPiece In map.Pieces
                     If SubPiece?.Camp = Camp.Sheep Then
                         For Each SubVec In InnerVecs
-                            Dim temp As Vector2 = SubPiece.Location + SubVec
+                            Dim temp As VectorInt = SubPiece.Location + SubVec
                             If SubPiece.Moveable(map, temp) Then
                                 movements.Add(New Movement With {.Piece = SubPiece, .Target = SubVec})
                             End If

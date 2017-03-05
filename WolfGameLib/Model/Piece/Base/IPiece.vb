@@ -10,9 +10,9 @@ Public Interface IPiece
     ''' <summary>
     ''' 位置
     ''' </summary>
-    Property Location As Vector2
+    Property Location As VectorInt
     ''' <summary>
     ''' 是否可移动
     ''' </summary>
-    Function Moveable(map As Map, loc As Vector2) As Boolean
+    Function Moveable(map As Map, loc As VectorInt) As Boolean
 End Interface

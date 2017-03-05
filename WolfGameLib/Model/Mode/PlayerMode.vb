@@ -9,5 +9,5 @@ Public Enum PlayerMode
     ''' <summary>
     ''' 双人游戏
     ''' </summary>
-    TwoPlayer = 2
+    Couple = 2
 End Enum

@@ -140,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Image\Sheep.png" />
-    <Resource Include="Image\Sheepfold.png" />
     <Resource Include="Image\Wolf.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
