@@ -1,4 +1,4 @@
-﻿<Window xmlns:WolfGameLib="clr-namespace:WolfGameLib;assembly=WolfGameLib"  x:Class="MainWindow"
+﻿<Window xmlns:WolfGameLibUI="clr-namespace:WolfGameLib.UI;assembly=WolfGameLib.UI"  x:Class="MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800">
     <Grid>
-        <WolfGameLib:WolfGameBox />
+        <WolfGameLibUI:WolfGameBox></WolfGameLibUI:WolfGameBox>
     </Grid>
 </Window>

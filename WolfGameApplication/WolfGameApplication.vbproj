@@ -133,14 +133,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WolfGameLib\WolfGameLib.vbproj">
-      <Project>{8D231156-B86A-4531-BEBD-271B1FB45FCE}</Project>
-      <Name>WolfGameLib</Name>
+    <ProjectReference Include="..\WolfGameLib.UI\WolfGameLib.UI.vbproj">
+      <Project>{65fc83b3-5666-4d75-aab4-3907a4164f04}</Project>
+      <Name>WolfGameLib.UI</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Image\Sheep.png" />
-    <Resource Include="Image\Wolf.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
