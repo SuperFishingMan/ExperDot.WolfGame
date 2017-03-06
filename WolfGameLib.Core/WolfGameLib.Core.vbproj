@@ -61,19 +61,21 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\AI\GameAI.vb" />
-    <Compile Include="Model\AI\Movement\Movement.vb" />
-    <Compile Include="Model\Camp\Camp.vb" />
-    <Compile Include="Model\GameBoard.vb" />
-    <Compile Include="Model\Map\Joint.vb" />
-    <Compile Include="Model\Map\Map.vb" />
-    <Compile Include="Model\Mode\DifficultyMode.vb" />
-    <Compile Include="Model\Mode\PlayerMode.vb" />
-    <Compile Include="Model\Piece\Base\IPiece.vb" />
-    <Compile Include="Model\Piece\Base\PieceBase.vb" />
-    <Compile Include="Model\Piece\Sheep\Sheep.vb" />
-    <Compile Include="Model\Piece\Wolf\Wolf.vb" />
-    <Compile Include="Model\Vector\VectorInt.vb" />
+    <Compile Include="Models\AI\GameAI.vb" />
+    <Compile Include="Models\Board\EventArgs\GameOverEventArgs.vb" />
+    <Compile Include="Models\Board\EventArgs\MapChangedEventArgs.vb" />
+    <Compile Include="Models\Movement\Movement.vb" />
+    <Compile Include="Models\Camp\Camp.vb" />
+    <Compile Include="Models\Board\GameBoard.vb" />
+    <Compile Include="Models\Map\Joint.vb" />
+    <Compile Include="Models\Map\Map.vb" />
+    <Compile Include="Models\Mode\DifficultyMode.vb" />
+    <Compile Include="Models\Mode\PlayerMode.vb" />
+    <Compile Include="Models\Piece\Base\IPiece.vb" />
+    <Compile Include="Models\Piece\Base\PieceBase.vb" />
+    <Compile Include="Models\Piece\Sheep\Sheep.vb" />
+    <Compile Include="Models\Piece\Wolf\Wolf.vb" />
+    <Compile Include="Utilities\Math\VectorInt.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

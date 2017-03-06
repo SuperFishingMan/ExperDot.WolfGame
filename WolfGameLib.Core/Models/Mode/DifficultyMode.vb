@@ -5,17 +5,17 @@ Public Enum DifficultyMode
     ''' <summary>
     ''' 简单
     ''' </summary>
-    Easy = 3
+    Easy = 1
     ''' <summary>
     ''' 普通
     ''' </summary>
-    Normal = 5
+    Normal = 3
     ''' <summary>
     ''' 困难
     ''' </summary>
-    Hard = 7
+    Hard = 5
     ''' <summary>
     ''' 残酷
     ''' </summary>
-    Cruel = 9
+    Cruel = 7
 End Enum

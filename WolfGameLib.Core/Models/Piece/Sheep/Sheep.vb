@@ -7,7 +7,7 @@ Public Class Sheep
     Public Overrides ReadOnly Property Camp As Camp = Camp.Sheep
 
     Public Overrides Function Moveable(map As Map, loc As VectorInt) As Boolean
-        If map.GetAvailiable(loc) AndAlso map.GetJoint(loc).Connected() AndAlso map.Locate(loc) Is Nothing Then
+        If map.SheepRemaining <= 0 AndAlso map.GetAvailiable(loc) AndAlso map.GetJoint(loc).Connected() AndAlso map.Locate(loc) Is Nothing Then
             Dim temp As VectorInt = (loc - Location)
             If InnerVectors.Contains(temp.AbsNew) Then
                 If map.GetJoint(Location).Connected(temp) Then

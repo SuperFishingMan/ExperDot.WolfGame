@@ -31,17 +31,18 @@ Public Class Map
         End Get
     End Property
     ''' <summary>
-    ''' 映射
+    ''' 连通器集合
     ''' </summary>
-    Public ReadOnly Property Mapping As Integer(,) = New Integer(,) {{0, 0, 1, 0, 0}, {0, 1, 1, 1, 0}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {0, 1, 1, 1, 0}, {0, 0, 1, 0, 0}}
-    ''' <summary>
-    ''' 连通器集
-    ''' </summary>
-    ''' <returns></returns>
     Public ReadOnly Property Joints As Joint(,)
+    ''' <summary>
+    ''' 走步集合
+    ''' </summary>
+    Public ReadOnly Property Movements As List(Of Movement)
+
     Public Sub New(w As Integer, h As Integer)
         ReDim Pieces(w - 1, h - 1)
         ReDim Joints(4, 8)
+        Movements = New List(Of Movement)
         '0
         Joints(0, 0) = New Joint With {.Round = New Integer(,) {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}}
         Joints(1, 0) = New Joint With {.Round = New Integer(,) {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}}
@@ -110,18 +111,11 @@ Public Class Map
         Pieces(piece.Location.X, piece.Location.Y) = piece
     End Sub
     ''' <summary>
-    ''' 定位
+    ''' 返回指定位置的棋子
     ''' </summary>
     Public Function Locate(loc As VectorInt) As IPiece
         Return Pieces(loc.X, loc.Y)
     End Function
-    ''' <summary>
-    ''' 赋值
-    ''' </summary>
-    Public Sub Assign(piece As IPiece, loc As VectorInt)
-        If piece IsNot Nothing Then piece.Location = loc
-        Pieces(loc.X, loc.Y) = piece
-    End Sub
     ''' <summary>
     ''' 返回指定位置的的连通器
     ''' </summary>
@@ -129,7 +123,7 @@ Public Class Map
         Return Joints(loc.X, loc.Y)
     End Function
     ''' <summary>
-    ''' 是否有效
+    ''' 返回指定位置是否有效
     ''' </summary>
     Public Function GetAvailiable(loc As VectorInt)
         If loc.X >= 0 AndAlso loc.X < Width AndAlso loc.Y >= 0 AndAlso loc.Y < Height Then
@@ -158,9 +152,9 @@ Public Class Map
                 MovePiece(piece, loc)
             End If
         End If
+        Movements.Add(New Movement() With {.Piece = piece, .Target = loc})
         Return True
     End Function
-
     ''' <summary>
     ''' 移动还原
     ''' </summary>
@@ -177,17 +171,135 @@ Public Class Map
                 MovePiece(piece, loc)
             End If
         End If
+        If Movements.Count > 0 Then
+            Movements.RemoveAt(Movements.Count - 1)
+        End If
         Return True
     End Function
+
+
+    Private Sub Assign(piece As IPiece, loc As VectorInt)
+        If piece IsNot Nothing Then piece.Location = loc
+        Pieces(loc.X, loc.Y) = piece
+    End Sub
     Private Sub MovePiece(piece As IPiece, loc As VectorInt)
         Dim temp As VectorInt = piece.Location
         Assign(piece, loc)
         Assign(Nothing, temp)
     End Sub
+
+
     ''' <summary>
-    ''' 胜负判定
+    ''' 前进
     ''' </summary>
-    Public Shared Function CheckVictory(map As Map) As Boolean
+    Public Shared Sub GoForward(map As Map, movement As Movement)
+        If movement.Piece Is Nothing Then
+            map.MoveTo(Nothing, movement.Target)
+        Else
+            map.MoveTo(movement.Piece, movement.Piece.Location + movement.Target)
+        End If
+        map.Exchange()
+    End Sub
+    ''' <summary>
+    ''' 后退
+    ''' </summary>
+    Public Shared Sub GoBack(map As Map, movement As Movement)
+        map.Exchange()
+        If movement.Piece Is Nothing Then
+            map.MoveToRevert(Nothing, movement.Target)
+        Else
+            map.MoveToRevert(movement.Piece, movement.Piece.Location - movement.Target)
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' 返回所有走法
+    ''' </summary>
+    Public Shared Function CalcMovements(map As Map) As Movement()
+        Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
+        Static OuterVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
+                                            New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+
+        Dim movements As New List(Of Movement)
+        If map.ActivedCamp = Camp.Wolf Then
+            For Each SubPiece In map.Pieces
+                If SubPiece?.Camp = Camp.Wolf Then
+                    For Each SubVec In OuterVecs
+                        Dim temp As VectorInt = SubPiece.Location + SubVec
+                        If SubPiece.Moveable(map, temp) Then
+                            movements.Add(New Movement With {.Piece = SubPiece, .Target = SubVec})
+                        End If
+                    Next
+                End If
+            Next
+        ElseIf map.ActivedCamp = Camp.Sheep Then
+            If map.SheepRemaining > 0 Then
+                For i = 0 To 4
+                    For j = 0 To 8
+                        Dim temp As VectorInt = New VectorInt(i, j)
+                        If map.Locate(temp) Is Nothing AndAlso map.GetJoint(temp).Connected Then
+                            movements.Add(New Movement With {.Piece = Nothing, .Target = temp})
+                        End If
+                    Next
+                Next
+            Else
+                For Each SubPiece In map.Pieces
+                    If SubPiece?.Camp = Camp.Sheep Then
+                        For Each SubVec In InnerVecs
+                            Dim temp As VectorInt = SubPiece.Location + SubVec
+                            If SubPiece.Moveable(map, temp) Then
+                                movements.Add(New Movement With {.Piece = SubPiece, .Target = SubVec})
+                            End If
+                        Next
+                    End If
+                Next
+            End If
+        End If
+        Return movements.ToArray
+    End Function
+
+    ''' <summary>
+    ''' 返回结束判定
+    ''' </summary>
+    Public Shared Function CheckGameOver(map As Map) As Boolean
+        Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
+        Static OuterVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
+                                            New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+
+        If map.ActivedCamp = Camp.Wolf Then
+            For Each SubPiece In map.Pieces
+                If SubPiece?.Camp = Camp.Wolf Then
+                    For Each SubVec In OuterVecs
+                        Dim temp As VectorInt = SubPiece.Location + SubVec
+                        If SubPiece.Moveable(map, temp) Then
+                            Return False
+                        End If
+                    Next
+                End If
+            Next
+        ElseIf map.ActivedCamp = Camp.Sheep Then
+            If map.SheepRemaining > 0 Then
+                For i = 0 To 4
+                    For j = 0 To 8
+                        Dim temp As VectorInt = New VectorInt(i, j)
+                        If map.Locate(temp) Is Nothing AndAlso map.GetJoint(temp).Connected Then
+                            Return False
+                        End If
+                    Next
+                Next
+            Else
+                For Each SubPiece In map.Pieces
+                    If SubPiece?.Camp = Camp.Sheep Then
+                        For Each SubVec In InnerVecs
+                            Dim temp As VectorInt = SubPiece.Location + SubVec
+                            If SubPiece.Moveable(map, temp) Then
+                                Return False
+                            End If
+                        Next
+                    End If
+                Next
+            End If
+        End If
         Return True
     End Function
 
