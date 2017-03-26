@@ -27,6 +27,10 @@ Public Class GameBoard
     ''' </summary>
     Public Property AI As GameAI
 
+    Public Sub New()
+        AI = New GameAI()
+    End Sub
+
     ''' <summary>
     ''' 开始
     ''' </summary>

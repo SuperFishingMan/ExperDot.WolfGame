@@ -7,7 +7,7 @@ Public Class Movement
     ''' </summary>
     Public Property Piece As IPiece
     ''' <summary>
-    ''' 目标位置
+    ''' 目标位置相对当前位置的偏移量
     ''' </summary>
-    Public Property Target As VectorInt
+    Public Property Offset As VectorInt
 End Class

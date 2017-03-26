@@ -7,14 +7,14 @@ Public Class GameAI
     ''' 走棋
     ''' </summary>
     Public Sub Move(board As GameBoard)
-        Dim temp = RootSearch(board.Map, Difficulty)
+        Dim temp = RootSearch(board.Map, Difficulty + 3)
         If temp Is Nothing Then
             board.Defeate()
         Else
             If temp.Piece Is Nothing Then
-                board.Move(Nothing, temp.Target)
+                board.Move(Nothing, temp.Offset)
             Else
-                board.Move(temp.Piece, temp.Piece.Location + temp.Target)
+                board.Move(temp.Piece, temp.Piece.Location + temp.Offset)
             End If
         End If
     End Sub
@@ -58,9 +58,6 @@ Public Class GameAI
             Return alpha
         End If
     End Function
-
-
-
     ''' <summary>
     ''' 返回局面评估值
     ''' </summary>

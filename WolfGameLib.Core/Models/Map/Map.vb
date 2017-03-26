@@ -140,19 +140,18 @@ Public Class Map
             If ActivedCamp = Camp.Sheep AndAlso SheepRemaining > 0 AndAlso GetJoint(loc).Connected Then
                 Assign(New Sheep, loc)
                 SheepRemaining -= 1
+                Movements.Add(New Movement() With {.Piece = piece, .Offset = loc})
             Else
                 Return False
             End If
         Else
-            Dim temp As VectorInt = (loc - piece.Location)
-            If temp.LengthSquared <= 2 Then
-                MovePiece(piece, loc)
-            Else
-                Assign(Nothing, piece.Location + temp / 2)
-                MovePiece(piece, loc)
+            Dim offset As VectorInt = (loc - piece.Location)
+            If offset.LengthSquared > 2 Then
+                Assign(Nothing, piece.Location + offset / 2)
             End If
+            MovePiece(piece, loc)
+            Movements.Add(New Movement() With {.Piece = piece, .Offset = offset})
         End If
-        Movements.Add(New Movement() With {.Piece = piece, .Target = loc})
         Return True
     End Function
     ''' <summary>
@@ -176,8 +175,6 @@ Public Class Map
         End If
         Return True
     End Function
-
-
     Private Sub Assign(piece As IPiece, loc As VectorInt)
         If piece IsNot Nothing Then piece.Location = loc
         Pieces(loc.X, loc.Y) = piece
@@ -187,16 +184,14 @@ Public Class Map
         Assign(piece, loc)
         Assign(Nothing, temp)
     End Sub
-
-
     ''' <summary>
     ''' 前进
     ''' </summary>
     Public Shared Sub GoForward(map As Map, movement As Movement)
         If movement.Piece Is Nothing Then
-            map.MoveTo(Nothing, movement.Target)
+            map.MoveTo(Nothing, movement.Offset)
         Else
-            map.MoveTo(movement.Piece, movement.Piece.Location + movement.Target)
+            map.MoveTo(movement.Piece, movement.Piece.Location + movement.Offset)
         End If
         map.Exchange()
     End Sub
@@ -206,12 +201,11 @@ Public Class Map
     Public Shared Sub GoBack(map As Map, movement As Movement)
         map.Exchange()
         If movement.Piece Is Nothing Then
-            map.MoveToRevert(Nothing, movement.Target)
+            map.MoveToRevert(Nothing, movement.Offset)
         Else
-            map.MoveToRevert(movement.Piece, movement.Piece.Location - movement.Target)
+            map.MoveToRevert(movement.Piece, movement.Piece.Location - movement.Offset)
         End If
     End Sub
-
     ''' <summary>
     ''' 返回所有走法
     ''' </summary>
@@ -227,7 +221,7 @@ Public Class Map
                     For Each SubVec In OuterVecs
                         Dim temp As VectorInt = SubPiece.Location + SubVec
                         If SubPiece.Moveable(map, temp) Then
-                            movements.Add(New Movement With {.Piece = SubPiece, .Target = SubVec})
+                            movements.Add(New Movement With {.Piece = SubPiece, .Offset = SubVec})
                         End If
                     Next
                 End If
@@ -238,7 +232,7 @@ Public Class Map
                     For j = 0 To 8
                         Dim temp As VectorInt = New VectorInt(i, j)
                         If map.Locate(temp) Is Nothing AndAlso map.GetJoint(temp).Connected Then
-                            movements.Add(New Movement With {.Piece = Nothing, .Target = temp})
+                            movements.Add(New Movement With {.Piece = Nothing, .Offset = temp})
                         End If
                     Next
                 Next
@@ -248,7 +242,7 @@ Public Class Map
                         For Each SubVec In InnerVecs
                             Dim temp As VectorInt = SubPiece.Location + SubVec
                             If SubPiece.Moveable(map, temp) Then
-                                movements.Add(New Movement With {.Piece = SubPiece, .Target = SubVec})
+                                movements.Add(New Movement With {.Piece = SubPiece, .Offset = SubVec})
                             End If
                         Next
                     End If
@@ -257,7 +251,6 @@ Public Class Map
         End If
         Return movements.ToArray
     End Function
-
     ''' <summary>
     ''' 返回结束判定
     ''' </summary>
@@ -265,7 +258,6 @@ Public Class Map
         Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
         Static OuterVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
                                             New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
-
         If map.ActivedCamp = Camp.Wolf Then
             For Each SubPiece In map.Pieces
                 If SubPiece?.Camp = Camp.Wolf Then
