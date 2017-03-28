@@ -50,7 +50,6 @@ Public Class GameBoard
         RaiseEvent MapChanged(Me, New MapChangedEventArgs(Map))
         '初始化AI
         If PlayerMode = PlayerMode.Single Then
-            AI = New GameAI()
             If Not Map.ActivedCamp = PlayerCamp Then
                 AI.Move(Me)
             End If

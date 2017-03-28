@@ -8,7 +8,7 @@ Public Class SettingsBox
     Public Event Confirmed(sender As Object, e As ConfirmedEventArgs)
 
     Public Property PlayerMode As PlayerMode = PlayerMode.Single
-    Public Property DifficultyMode As DifficultyMode = DifficultyMode.Normal
+    Public Property DifficultyMode As DifficultyMode = DifficultyMode.Easy
     Public Property PlayerCamp As Camp = Camp.Wolf
 
     Public Sub New()

@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid x:Name="Grid0" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBlock x:Name="TextBlock1" Text="狼" FontSize="12" Foreground="#FF939393" Margin="-100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <TextBlock x:Name="TextBlock1" Text="" FontSize="12" Foreground="#FF939393" Margin="-100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
             <Button x:Name="Button1" Margin="-100,34.365,0,-34.365" HorizontalAlignment="Left" VerticalAlignment="Top" Content="提示"/>
             <Button x:Name="Button2" Margin="-100,66.873,0,-66.873" HorizontalAlignment="Left" VerticalAlignment="Top" Content="悔棋"/>
             <Button x:Name="Button3" Margin="-100,103.094,0,-103.095" HorizontalAlignment="Left" VerticalAlignment="Top" Content="终止"/>

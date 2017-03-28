@@ -14,8 +14,4 @@ Public Enum DifficultyMode
     ''' 困难
     ''' </summary>
     Hard = 2
-    ''' <summary>
-    ''' 残酷
-    ''' </summary>
-    Cruel = 3
 End Enum

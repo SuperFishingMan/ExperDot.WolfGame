@@ -1,7 +1,7 @@
 ﻿''' <summary>
 ''' 走步
 ''' </summary>
-Public Class Movement
+Public Structure Movement
     ''' <summary>
     ''' 目标棋子
     ''' </summary>
@@ -10,4 +10,4 @@ Public Class Movement
     ''' 目标位置相对当前位置的偏移量
     ''' </summary>
     Public Property Offset As VectorInt
-End Class
+End Structure

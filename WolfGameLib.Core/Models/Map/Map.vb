@@ -210,21 +210,23 @@ Public Class Map
     ''' 返回所有走法
     ''' </summary>
     Public Shared Function CalcMovements(map As Map) As Movement()
-        Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
-        Static OuterVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
-                                            New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
+        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
+                                                           New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
 
-        Dim movements As New List(Of Movement)
+        Dim results As New List(Of Movement)
         If map.ActivedCamp = Camp.Wolf Then
-            For Each SubPiece In map.Pieces
-                If SubPiece?.Camp = Camp.Wolf Then
-                    For Each SubVec In OuterVecs
-                        Dim temp As VectorInt = SubPiece.Location + SubVec
-                        If SubPiece.Moveable(map, temp) Then
-                            movements.Add(New Movement With {.Piece = SubPiece, .Offset = SubVec})
-                        End If
-                    Next
-                End If
+            For i = 0 To map.Width - 1
+                For j = 0 To map.Height - 1
+                    If map.Pieces(i, j)?.Camp = Camp.Wolf Then
+                        For k = 0 To OuterVecs.Length - 1
+                            Dim temp As VectorInt = map.Pieces(i, j).Location + OuterVecs(k)
+                            If map.Pieces(i, j).Moveable(map, temp) Then
+                                results.Add(New Movement With {.Piece = map.Pieces(i, j), .Offset = OuterVecs(k)})
+                            End If
+                        Next
+                    End If
+                Next
             Next
         ElseIf map.ActivedCamp = Camp.Sheep Then
             If map.SheepRemaining > 0 Then
@@ -232,63 +234,69 @@ Public Class Map
                     For j = 0 To 8
                         Dim temp As VectorInt = New VectorInt(i, j)
                         If map.Locate(temp) Is Nothing AndAlso map.GetJoint(temp).Connected Then
-                            movements.Add(New Movement With {.Piece = Nothing, .Offset = temp})
+                            results.Add(New Movement With {.Piece = Nothing, .Offset = temp})
                         End If
                     Next
                 Next
             Else
-                For Each SubPiece In map.Pieces
-                    If SubPiece?.Camp = Camp.Sheep Then
-                        For Each SubVec In InnerVecs
-                            Dim temp As VectorInt = SubPiece.Location + SubVec
-                            If SubPiece.Moveable(map, temp) Then
-                                movements.Add(New Movement With {.Piece = SubPiece, .Offset = SubVec})
-                            End If
-                        Next
-                    End If
+                For i = 0 To map.Width - 1
+                    For j = 0 To map.Height - 1
+                        If map.Pieces(i, j)?.Camp = Camp.Sheep Then
+                            For k = 0 To InnerVecs.Length - 1
+                                Dim temp As VectorInt = map.Pieces(i, j).Location + InnerVecs(k)
+                                If map.Pieces(i, j).Moveable(map, temp) Then
+                                    results.Add(New Movement With {.Piece = map.Pieces(i, j), .Offset = InnerVecs(k)})
+                                End If
+                            Next
+                        End If
+                    Next
                 Next
             End If
         End If
-        Return movements.ToArray
+        Return results.ToArray
     End Function
     ''' <summary>
     ''' 返回结束判定
     ''' </summary>
     Public Shared Function CheckGameOver(map As Map) As Boolean
-        Static InnerVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
-        Static OuterVecs = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
-                                            New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
+        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
+                                                           New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
         If map.ActivedCamp = Camp.Wolf Then
-            For Each SubPiece In map.Pieces
-                If SubPiece?.Camp = Camp.Wolf Then
-                    For Each SubVec In OuterVecs
-                        Dim temp As VectorInt = SubPiece.Location + SubVec
-                        If SubPiece.Moveable(map, temp) Then
-                            Return False
-                        End If
-                    Next
-                End If
+            For i = 0 To map.Width - 1
+                For j = 0 To map.Height - 1
+                    If map.Pieces(i, j)?.Camp = Camp.Wolf Then
+                        For k = 0 To OuterVecs.Length - 1
+                            Dim temp As VectorInt = map.Pieces(i, j).Location + OuterVecs(k)
+                            If map.Pieces(i, j).Moveable(map, temp) Then
+                                Return False
+                            End If
+                        Next
+                    End If
+                Next
             Next
         ElseIf map.ActivedCamp = Camp.Sheep Then
             If map.SheepRemaining > 0 Then
                 For i = 0 To 4
                     For j = 0 To 8
-                        Dim temp As VectorInt = New VectorInt(i, j)
+                        Dim temp As New VectorInt(i, j)
                         If map.Locate(temp) Is Nothing AndAlso map.GetJoint(temp).Connected Then
                             Return False
                         End If
                     Next
                 Next
             Else
-                For Each SubPiece In map.Pieces
-                    If SubPiece?.Camp = Camp.Sheep Then
-                        For Each SubVec In InnerVecs
-                            Dim temp As VectorInt = SubPiece.Location + SubVec
-                            If SubPiece.Moveable(map, temp) Then
-                                Return False
-                            End If
-                        Next
-                    End If
+                For i = 0 To map.Width - 1
+                    For j = 0 To map.Height - 1
+                        If map.Pieces(i, j)?.Camp = Camp.Sheep Then
+                            For k = 0 To InnerVecs.length - 1
+                                Dim temp As VectorInt = map.Pieces(i, j).Location + InnerVecs(k)
+                                If map.Pieces(i, j).Moveable(map, temp) Then
+                                    Return False
+                                End If
+                            Next
+                        End If
+                    Next
                 Next
             End If
         End If

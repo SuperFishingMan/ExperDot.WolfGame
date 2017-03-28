@@ -29,6 +29,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>WolfGameLib.UI.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -47,6 +48,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -118,12 +120,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Image\sheep.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Image\wolf.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Controls\CellBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -154,6 +150,10 @@
       <Project>{A0F1F9C8-355F-40B7-925A-99C257BF1B8C}</Project>
       <Name>WolfGameLib.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\Sheep.png" />
+    <Resource Include="Image\Wolf.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -34,6 +34,7 @@ Public Class PieceBox
 
     Private m_IsOpposite As Boolean
     Private m_IsScale As Boolean
+
     Private Sub Grid1_MouseEnter(sender As Object, e As MouseEventArgs) Handles Grid1.MouseEnter
         Grid1.Effect = New DropShadowEffect With {.ShadowDepth = 1}
     End Sub
