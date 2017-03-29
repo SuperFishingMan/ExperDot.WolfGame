@@ -24,7 +24,7 @@ Public Class PieceBox
             If value Then
                 Grid0.RenderTransform = New ScaleTransform(0.5F, 0.5F)
             Else
-                Grid0.RenderTransform = New ScaleTransform(1.0F, 1.0F)
+                Grid0.RenderTransform = New ScaleTransform(1.2F, 1.2F)
             End If
         End Set
         Get

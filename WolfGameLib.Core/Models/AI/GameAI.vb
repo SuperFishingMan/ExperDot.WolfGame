@@ -4,6 +4,16 @@
 Public Class GameAI
     Public Property Difficulty As DifficultyMode = DifficultyMode.Easy
     Dim count As Integer
+
+    Private PositionValue(,) As Integer = New Integer(,) {{0, 0, 10, 0, 0},
+                                                          {0, 10, 5, 10, 0},
+                                                          {40, 30, 10, 30, 40},
+                                                          {60, 20, 40, 20, 60},
+                                                          {50, 40, 100, 40, 50},
+                                                          {60, 20, 40, 20, 60},
+                                                          {40, 30, 10, 30, 40},
+                                                          {0, 10, 5, 10, 0},
+                                                          {0, 0, 10, 0, 0}}
     ''' <summary>
     ''' 走棋
     ''' </summary>
@@ -50,8 +60,10 @@ Public Class GameAI
     ''' AlphaBeta搜索
     ''' </summary>
     Public Function AlphaBeta(map As Map, depth As Integer, alpha As Integer, beta As Integer) As Integer
-        If (depth <= 0 OrElse Map.CheckGameOver(map)) Then
+        If depth <= 0 Then
             Return Evaluate(map)
+        ElseIf Map.CheckGameOver(map) Then
+            Return -10000000
         Else
             Dim value As Integer = Integer.MinValue
             Dim movements = Map.CalcMovements(map)
@@ -76,10 +88,11 @@ Public Class GameAI
     Public Function Evaluate(map As Map) As Integer
         count += 1
         Dim value As Integer = 0
-        Dim sheepCount As Integer = map.SheepRemaining
+        Dim sheepCount As Integer = 0
         Dim round As Integer = 0
-        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
-        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+        Dim realPosValue = GetRealPositionValue(map)
+        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(-1, 1), New VectorInt(-1, 0)}
+        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(-2, 2), New VectorInt(-2, 0)}
         Dim subPiece As IPiece
         For i = 0 To map.Pieces.Length - 1
             subPiece = map.Pieces(i \ 9, i Mod 9)
@@ -88,7 +101,6 @@ Public Class GameAI
                 For k = 0 To InnerVecs.Length - 1
                     Dim temp As VectorInt = subPiece.Location + InnerVecs(k)
                     If subPiece.Moveable(map, temp) Then
-                        value += 5
                         round += 1
                     End If
                 Next
@@ -101,15 +113,42 @@ Public Class GameAI
                 Next
             ElseIf subPiece.Camp = Camp.Sheep Then
                 sheepCount += 1
+                'value -= realPosValue(subPiece.Location.Y, subPiece.Location.X) / 10
             End If
         Next
         If round = 0 Then
-            value = -100000000
+            value = -10000000
         Else
-            value -= sheepCount * 10 * Math.Log(sheepCount)
+            value -= map.SheepRemaining * 1000 * Math.Log(10 + map.SheepRemaining)
+            value -= sheepCount * 300 * Math.Log(10 + sheepCount)
         End If
-
         Return value
+    End Function
+
+    ''' <summary>
+    ''' 返回位置评估值
+    ''' </summary>
+    Public Function GetRealPositionValue(map As Map) As Integer(,)
+        Dim result(8, 4) As Integer
+        For x = 0 To 4
+            For y = 0 To 8
+                result(y, x) = PositionValue(y, x)
+            Next
+        Next
+        Dim subPiece As IPiece
+        For i = 0 To map.Pieces.Length - 1
+            subPiece = map.Pieces(i \ 9, i Mod 9)
+            If subPiece Is Nothing Then Continue For
+            If subPiece.Camp = Camp.Wolf Then
+                For x = 0 To 4
+                    For y = 0 To 8
+                        Dim temp = New VectorInt(x, y) - subPiece.Location
+                        result(y, x) += 20 / (Math.Abs(temp.X) + Math.Abs(temp.Y) + 1)
+                    Next
+                Next
+            End If
+        Next
+        Return result
     End Function
 
 End Class

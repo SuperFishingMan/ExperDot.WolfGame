@@ -210,9 +210,9 @@ Public Class Map
     ''' 返回所有走法
     ''' </summary>
     Public Shared Function CalcMovements(map As Map) As Movement()
-        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
-        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
-                                                           New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(-1, 1), New VectorInt(-1, 0)}
+        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(-1, 1), New VectorInt(-1, 0),
+                                                           New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(-2， 2), New VectorInt(-2, 0)}
 
         Dim results As New List(Of Movement)
         If map.ActivedCamp = Camp.Wolf Then
@@ -259,9 +259,9 @@ Public Class Map
     ''' 返回结束判定
     ''' </summary>
     Public Shared Function CheckGameOver(map As Map) As Boolean
-        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0)}
-        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(0, -1), New VectorInt(-1, 0),
-                                                           New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(0, -2), New VectorInt(-2, 0)}
+        Static InnerVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(-1, 1), New VectorInt(-1, 0)}
+        Static OuterVecs() As VectorInt = New VectorInt() {New VectorInt(-1, -1), New VectorInt(0, -1), New VectorInt(1, -1), New VectorInt(1, 0), New VectorInt(1, 1), New VectorInt(0, 1), New VectorInt(-1, 1), New VectorInt(-1, 0),
+                                                           New VectorInt(-2, -2), New VectorInt(0, -2), New VectorInt(2, -2), New VectorInt(2, 0), New VectorInt(2, 2), New VectorInt(0, 2), New VectorInt(-2, 2), New VectorInt(-2, 0)}
         If map.ActivedCamp = Camp.Wolf Then
             For i = 0 To map.Width - 1
                 For j = 0 To map.Height - 1
